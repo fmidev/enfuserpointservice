@@ -13,7 +13,7 @@ After registering, you’ll be sent a message to confirm your e-mail.
 
 The e-mail adress will be used only to facilitate communication about the service to you and the service is only meant for project partners in currently active projects - not for members of the general public. You are explicitly not allowed to register or use the services if you are not representing a project partner.
 
-Once you’ve created an account, send an e-mail to Matti Jokinen explaining your intended usage and once it has been approved, you can then use your e-mail (i.e. your username) and password to access the service.
+Once you’ve created an account and your usage has been approved, you will be notified by e-mail. Then you can use your user name (i.e. your email address) and password to access the service.
 
 # Accessing the data
 
