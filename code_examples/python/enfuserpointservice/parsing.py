@@ -31,8 +31,7 @@ def create_set(times, entry, name, units=None):
                     coords={'time': times}
     )
 
-    if units is not None:
-        ds.attrs['unit'] = entry["name"]
+    ds.attrs['unit'] = units[entry["name"]]
 
     ds.attrs['name'] = entry['name']
 
@@ -57,7 +56,7 @@ def transform_to_xarray(data):
             datasets[key] = create_set(times, dd, key, units)
         else:
             for entry in dd:
-                datasets[entry['name']] = create_set(times, entry, '')
+                datasets[entry['name']] = create_set(times, entry, '', units)
 
     for i in range(datapoints):
         for key, dd in data["data"][i]["values"].items():
