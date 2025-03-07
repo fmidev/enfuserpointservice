@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 
-def create_set(times, entry, name):
+def create_set(times, entry, name, units=None):
     
     dt = len(times)
 
     if name == "meteorology":
         #special case
         for item in entry:
-            components = {item['name']: ("time", np.full(dt, np.nan), {"unit":item["unit"]}) for item in entry}
+            components = {item['name']: ("time", np.full(dt, np.nan), {"unit":units[item["name"]]}) for item in entry}
         ds = xr.Dataset(data_vars=components,
                     coords={'time': times}
         )
@@ -31,8 +31,8 @@ def create_set(times, entry, name):
                     coords={'time': times}
     )
 
-    if entry['unit'] != "":
-        ds.attrs['unit'] = entry['unit']
+    if units is not None:
+        ds.attrs['unit'] = entry["name"]
 
     ds.attrs['name'] = entry['name']
 
@@ -43,6 +43,8 @@ def transform_to_xarray(data):
     latitude = data["latitude"]
     longitudes = data["longitude"]
 
+    units = data["units"]
+
     datapoints = len(data["data"])
 
     times = pd.to_datetime([record["date"] for record in data["data"]])
@@ -50,14 +52,12 @@ def transform_to_xarray(data):
     datasets = {}
 
     #Create all datasets based on the first value
-    i = 0
     for key, dd in data["data"][0]["values"].items():
         if key == "meteorology":
-            datasets[key] = create_set(times, dd, key)
+            datasets[key] = create_set(times, dd, key, units)
         else:
             for entry in dd:
                 datasets[entry['name']] = create_set(times, entry, '')
-        i=i+1
 
     for i in range(datapoints):
         for key, dd in data["data"][i]["values"].items():
