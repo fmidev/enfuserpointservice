@@ -286,6 +286,25 @@ https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.17501&lon=24.9326
 
 </details>
 
+
+<details>
+
+<Summary> Inside buildings the API returns an explanation and no data </Summary>
+
+In these cases pick a point outside the building.
+
+Example building call
+```
+https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.19823873736357&lon=24.930557907247696&startTime=2025-03-10T13%3A09%3A58Z
+```
+
+Example json output
+```javascript
+{"longitude":24.930557907247696,"latitude":60.19823873736357,"unavailable":"Location is inside a building.","data":[]}
+```
+
+</details>
+
 ## Known issues
 * The server can return 403 even with correct credentials when there is high load. Simply retry after a few seconds.
 
