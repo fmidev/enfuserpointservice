@@ -46,7 +46,7 @@ def transform_to_xarray(data):
 
     datapoints = len(data["data"])
 
-    times = pd.to_datetime([record["date"] for record in data["data"]])
+    times = pd.to_datetime([record["date"] for record in data["data"]]).values
 
     datasets = {}
 
