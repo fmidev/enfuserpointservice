@@ -26,7 +26,9 @@ endtime = "2025-01-01T01:00:00Z"
 #Parsed to a dictionary of xarrays
 result = a.acquire(lat, lon, starttime, endtime, parse=True)
 
-# Raw json response
+# Json response
 result_json = a.acquire(lat, lon, starttime, endtime)
-```
 
+#Get modelling area information as json parsed into a python list+dictionary
+area_info = a.get_modelling_areas()
+```

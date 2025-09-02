@@ -49,13 +49,13 @@ curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-
 
 The main endpoint is
 
-https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data
+https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/point-data
 
 The endpoint takes the following arguments
 
 - lat: latitude
 - lon: longitude
-- startTime (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given in UTC)
+- startTime (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given with proper timezones)
 - endTime (optional, default startTime) same format as starttime
 
 This endpoint gives json that has all the modeled pollutants and meteorological data for times that fall between startTime and endTime. The data is only available at full hours (i.e. 12:00, 13:00 etc), so the interval should contain at least one of them.
@@ -65,11 +65,13 @@ These endpoints should be called with a https GET query, you must include the ac
 
 Where you need to replace “access_token” with the actual access token (Which will be a very long string)
 
+There are other endpoints that will be documented as they are considered ready for general use.
+
 ## Example query to the endpoint
 
 For a call (with proper headers as described above):
 ```
-https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.17501&lon=24.93263&startTime=2025-02-24T01%3A00%3A00Z&endTime=2025-02-24T02%3A00%3A00Z
+https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.263296126396405&lon=24.912241001988615&startTime=2025-08-26T00%3A00Z&endTime=2025-08-26T01%3A00Z
 ```
 
 <details>
@@ -77,211 +79,461 @@ https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.17501&lon=24.9326
 <summary> Example output json (the values are for example only). The amount of pollutant species can be different for different modelling areas. </summary>
 
 ```javascript
-{'longitude': 24.93263,
- 'latitude': 60.17501,
- 'units': {'BC': 'µg/m^3',
-  'NO': 'µg/m^3',
-  'ABLH': 'm',
-  'O3': 'µg/m^3',
-  'PNC': '1/cm^3',
-  'wind_E': 'degrees',
-  'coarsePM': 'µg/m^3',
-  'skyCondition': '',
-  'NO2': 'µg/m^3',
-  'SO2': 'µg/m^3',
-  'temperature': '°C',
-  'AQI': '',
-  'humidity': '%',
-  'swRad': 'W/m^2',
-  'windDirection': 'degrees',
-  'windSpeed': 'm/s',
-  'wind_N': 'm/s',
-  'rain': 'precipitation_mm_per_hour',
-  'lwRad': 'W/m^2',
-  'NMVOC': 'µg/m^3',
-  'LDSA': 'µm^2/cm^3',
-  'PM25': 'µg/m^3',
-  'pressure': 'hPa',
-  'CO': 'µg/m^3',
-  'roadSurfaceWater': 'µm',
-  'PM10': 'µg/m^3',
-  'InvMOlength': '1/m'},
- 'data': [{'date': '2025-02-24T01:00:00Z',
-   'values': {'meteorology': [{'name': 'ABLH', 'value': 235.865},
-     {'name': 'InvMOlength', 'value': 0.001},
-     {'name': 'humidity', 'value': 90.356},
-     {'name': 'lwRad', 'value': 293.449},
-     {'name': 'pressure', 'value': 1020.981},
-     {'name': 'rain', 'value': 0.01},
-     {'name': 'roadSurfaceWater', 'value': 0.05},
-     {'name': 'skyCondition', 'value': 1.0},
-     {'name': 'swRad', 'value': 0.0},
-     {'name': 'temperature', 'value': 1.967},
-     {'name': 'windDirection', 'value': 207.479},
-     {'name': 'windSpeed', 'value': 6.106},
-     {'name': 'wind_E', 'value': 2.813},
-     {'name': 'wind_N', 'value': 5.432}],
-    'pollutants': [{'name': 'AQI', 'value': 3.009},
-     {'name': 'BC',
-      'value': 1.467,
-      'components': [{'component': 'bg', 'value': 1.423},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.0},
-       {'component': 'ship', 'value': 0.001},
-       {'component': 'traffic', 'value': 0.036}],
-      'regional': 0.863},
-     {'name': 'CO',
-      'value': 180.648,
-      'components': [{'component': 'bg', 'value': 170.303},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.013},
-       {'component': 'ship', 'value': 0.0},
-       {'component': 'traffic', 'value': 7.806}],
-      'regional': 239.031},
-     {'name': 'LDSA',
-      'value': 18.322,
-      'components': [{'component': 'bg', 'value': 16.428},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.002},
-       {'component': 'ship', 'value': 0.008},
-       {'component': 'traffic', 'value': 1.407}],
-      'regional': 14.622},
-     {'name': 'NO',
-      'value': 2.896,
-      'components': [{'component': 'bg', 'value': 0.0},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.009},
-       {'component': 'ship', 'value': 0.064},
-       {'component': 'traffic', 'value': 2.198}],
-      'regional': 0.014},
-     {'name': 'NO2',
-      'value': 8.313,
-      'components': [{'component': 'bg', 'value': 5.949},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.004},
-       {'component': 'ship', 'value': 0.095},
-       {'component': 'traffic', 'value': 1.728}],
-      'regional': 10.832},
-     {'name': 'O3',
-      'value': 57.334,
-      'components': [{'component': 'bg', 'value': 58.937},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': -0.016},
-       {'component': 'ship', 'value': -0.056},
-       {'component': 'traffic', 'value': -1.61}],
-      'regional': 37.493},
-     {'name': 'PM10', 'value': 32.301, 'regional': 15.052},
-     {'name': 'PM25',
-      'value': 25.616,
-      'components': [{'component': 'bg', 'value': 25.136},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.002},
-       {'component': 'ship', 'value': 0.003},
-       {'component': 'traffic', 'value': 0.375}],
-      'regional': 14.622},
-     {'name': 'PNC',
-      'value': 12401.994,
-      'components': [{'component': 'bg', 'value': 7622.396},
-       {'component': 'household', 'value': 0.002},
-       {'component': 'power', 'value': 1.944},
-       {'component': 'ship', 'value': 2.637},
-       {'component': 'traffic', 'value': 3312.948}],
-      'regional': 7311.122},
-     {'name': 'coarsePM',
-      'value': 6.428,
-      'components': [{'component': 'bg', 'value': 0.0},
-       {'component': 'misc', 'value': 2.031},
-       {'component': 'resusp', 'value': 2.832},
-       {'component': 'traffic', 'value': 0.233}],
-      'regional': 0.56}]}},
-  {'date': '2025-02-24T02:00:00Z',
-   'values': {'meteorology': [{'name': 'ABLH', 'value': 224.745},
-     {'name': 'InvMOlength', 'value': 0.001},
-     {'name': 'humidity', 'value': 90.086},
-     {'name': 'lwRad', 'value': 299.594},
-     {'name': 'pressure', 'value': 1020.507},
-     {'name': 'rain', 'value': 0.0},
-     {'name': 'roadSurfaceWater', 'value': 0.059},
-     {'name': 'skyCondition', 'value': 1.0},
-     {'name': 'swRad', 'value': 0.0},
-     {'name': 'temperature', 'value': 2.057},
-     {'name': 'windDirection', 'value': 217.061},
-     {'name': 'windSpeed', 'value': 5.487},
-     {'name': 'wind_E', 'value': 3.28},
-     {'name': 'wind_N', 'value': 4.413}],
-    'pollutants': [{'name': 'AQI', 'value': 3.111},
-     {'name': 'BC',
-      'value': 1.424,
-      'components': [{'component': 'bg', 'value': 1.37},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.002},
-       {'component': 'ship', 'value': 0.0},
-       {'component': 'traffic', 'value': 0.051}],
-      'regional': 0.886},
-     {'name': 'CO',
-      'value': 184.682,
-      'components': [{'component': 'bg', 'value': 173.536},
-       {'component': 'household', 'value': 0.017},
-       {'component': 'power', 'value': 0.071},
-       {'component': 'ship', 'value': 0.0},
-       {'component': 'traffic', 'value': 8.402}],
-      'regional': 240.04},
-     {'name': 'LDSA',
-      'value': 18.858,
-      'components': [{'component': 'bg', 'value': 17.011},
-       {'component': 'household', 'value': 0.001},
-       {'component': 'power', 'value': 0.01},
-       {'component': 'ship', 'value': 0.004},
-       {'component': 'traffic', 'value': 1.444}],
-      'regional': 15.295},
-     {'name': 'NO',
-      'value': 2.837,
-      'components': [{'component': 'bg', 'value': 0.0},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.051},
-       {'component': 'ship', 'value': 0.028},
-       {'component': 'traffic', 'value': 2.164}],
-      'regional': 0.015},
-     {'name': 'NO2',
-      'value': 7.991,
-      'components': [{'component': 'bg', 'value': 5.633},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.025},
-       {'component': 'ship', 'value': 0.042},
-       {'component': 'traffic', 'value': 1.835}],
-      'regional': 10.77},
-     {'name': 'O3',
-      'value': 58.571,
-      'components': [{'component': 'bg', 'value': 59.839},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': -0.052},
-       {'component': 'ship', 'value': -0.025},
-       {'component': 'traffic', 'value': -1.35}],
-      'regional': 37.081},
-     {'name': 'PM10', 'value': 33.4, 'regional': 15.789},
-     {'name': 'PM25',
-      'value': 27.273,
-      'components': [{'component': 'bg', 'value': 26.882},
-       {'component': 'household', 'value': 0.0},
-       {'component': 'power', 'value': 0.01},
-       {'component': 'ship', 'value': 0.001},
-       {'component': 'traffic', 'value': 0.379}],
-      'regional': 15.295},
-     {'name': 'PNC',
-      'value': 12651.571,
-      'components': [{'component': 'bg', 'value': 7652.822},
-       {'component': 'household', 'value': 0.504},
-       {'component': 'power', 'value': 9.779},
-       {'component': 'ship', 'value': 1.317},
-       {'component': 'traffic', 'value': 2976.331}],
-      'regional': 7643.334},
-     {'name': 'coarsePM',
-      'value': 5.88,
-      'components': [{'component': 'bg', 'value': 0.0},
-       {'component': 'misc', 'value': 2.039},
-       {'component': 'resusp', 'value': 2.789},
-       {'component': 'traffic', 'value': 0.233}],
-      'regional': 0.543}]}}]}
+{
+  "data": [
+    {
+      "date": "2025-08-26T00:00:00Z",
+      "values": {
+        "meteorology": [
+          {
+            "name": "InvMOlength",
+            "value": -0.0076
+          },
+          {
+            "name": "pressure",
+            "value": 998.6602
+          },
+          {
+            "name": "ABLH",
+            "value": 312.3657
+          },
+          {
+            "name": "dewPoint",
+            "value": 8.4669
+          },
+          {
+            "name": "wind_E",
+            "value": 2.013
+          },
+          {
+            "name": "lwRad",
+            "value": 285.1766
+          },
+          {
+            "name": "wind_N",
+            "value": -2.4294
+          },
+          {
+            "name": "rain",
+            "value": 0.0
+          },
+          {
+            "name": "humidity",
+            "value": 89.4313
+          },
+          {
+            "name": "roadSurfaceWater",
+            "value": 0.0
+          },
+          {
+            "name": "sensHflux",
+            "value": -1.867
+          },
+          {
+            "name": "swRad",
+            "value": 0.0
+          },
+          {
+            "name": "temperature",
+            "value": 10.0449
+          },
+          {
+            "name": "skyCondition",
+            "value": 0.0127
+          },
+          {
+            "name": "windDirection",
+            "value": 319.3647
+          },
+          {
+            "name": "windSpeed",
+            "value": 3.1365
+          }
+        ],
+        "pollutants": [
+          {
+            "name": "AQI",
+            "altitude100m": 1.055,
+            "value": 1.0538
+          },
+          {
+            "name": "LDSA",
+            "regional": 0.7636,
+            "altitude100m": 2.8049,
+            "components": {
+              "bg": 2.5656,
+              "household": 0.0,
+              "ship": 0.0,
+              "power": 0.0124,
+              "misc": 0.0008,
+              "traffic": 0.24760000000000026
+            },
+            "value": 2.8264
+          },
+          {
+            "name": "BC",
+            "regional": 0.0468,
+            "altitude100m": 0.0571,
+            "components": {
+              "bg": 0.0468,
+              "ship": 0.0,
+              "household": 0.0,
+              "power": 0.0005,
+              "misc": 0.0,
+              "traffic": 0.010999999999999996
+            },
+            "value": 0.0583
+          },
+          {
+            "name": "CO",
+            "regional": 146.24,
+            "altitude100m": 65.2636,
+            "components": {
+              "bg": 63.2687,
+              "ship": 0.004,
+              "household": 0.0,
+              "power": 0.0182,
+              "misc": 0.0,
+              "traffic": 2.092000000000006
+            },
+            "value": 65.3829
+          },
+          {
+            "name": "NO2",
+            "regional": 3.4279,
+            "altitude100m": 0.7732,
+            "components": {
+              "bg": 0.0,
+              "ship": 0.0,
+              "household": 0.0,
+              "power": 0.0195,
+              "misc": 0.0,
+              "traffic": 0.8153
+            },
+            "value": 0.8348
+          },
+          {
+            "name": "NO",
+            "regional": 0.0196,
+            "altitude100m": 0.7439,
+            "components": {
+              "bg": 0.0,
+              "ship": 0.0,
+              "household": 0.0,
+              "power": 0.0131,
+              "misc": 0.0,
+              "traffic": 0.8019
+            },
+            "value": 0.815
+          },
+          {
+            "name": "O3",
+            "regional": 34.5136,
+            "altitude100m": 34.7122,
+            "components": {
+              "bg": 35.0728,
+              "household": 0.0,
+              "ship": 0.0,
+              "power": -0.0225,
+              "misc": 0.0,
+              "traffic": -0.3575999999999979
+            },
+            "value": 34.6927
+          },
+          {
+            "name": "PM10",
+            "regional": 1.1695,
+            "altitude100m": 3.1776,
+            "value": 3.2163
+          },
+          {
+            "name": "PM25",
+            "regional": 0.7636,
+            "altitude100m": 1.0254,
+            "components": {
+              "bg": 0.9537,
+              "household": 0.0,
+              "ship": 0.0,
+              "power": 0.0037,
+              "misc": 0.0,
+              "traffic": 0.07279999999999998
+            },
+            "value": 1.0302
+          },
+          {
+            "name": "coarsePM",
+            "regional": 0.4023,
+            "altitude100m": 2.1528,
+            "components": {
+              "bg": 2.1425,
+              "misc": 0.0254,
+              "resusp": 0.0309,
+              "traffic": -0.004999999999999893
+            },
+            "value": 2.1938
+          },
+          {
+            "name": "PNC",
+            "regional": 381.952,
+            "altitude100m": 1249.3025,
+            "components": {
+              "bg": 927.7849,
+              "ship": 1.1026,
+              "household": 0.0,
+              "power": 3.8002,
+              "misc": 0.0,
+              "traffic": 346.2912000000001
+            },
+            "value": 1278.9789
+          }
+        ]
+      },
+      "localDate": "2025-08-26T03:00:00+03:00"
+    },
+    {
+      "date": "2025-08-26T01:00:00Z",
+      "values": {
+        "meteorology": [
+          {
+            "name": "InvMOlength",
+            "value": -0.0107
+          },
+          {
+            "name": "pressure",
+            "value": 998.7787
+          },
+          {
+            "name": "ABLH",
+            "value": 303.7438
+          },
+          {
+            "name": "dewPoint",
+            "value": 8.1684
+          },
+          {
+            "name": "wind_E",
+            "value": 2.41
+          },
+          {
+            "name": "lwRad",
+            "value": 275.7146
+          },
+          {
+            "name": "wind_N",
+            "value": -2.4197
+          },
+          {
+            "name": "rain",
+            "value": 0.0
+          },
+          {
+            "name": "humidity",
+            "value": 91.0245
+          },
+          {
+            "name": "roadSurfaceWater",
+            "value": 0.0
+          },
+          {
+            "name": "sensHflux",
+            "value": -0.1805
+          },
+          {
+            "name": "swRad",
+            "value": 0.0
+          },
+          {
+            "name": "temperature",
+            "value": 9.4676
+          },
+          {
+            "name": "skyCondition",
+            "value": 0.0643
+          },
+          {
+            "name": "windDirection",
+            "value": 314.8381
+          },
+          {
+            "name": "windSpeed",
+            "value": 3.3908
+          }
+        ],
+        "pollutants": [
+          {
+            "name": "AQI",
+            "altitude100m": 1.0556,
+            "value": 1.0554
+          },
+          {
+            "name": "LDSA",
+            "regional": 0.8112,
+            "altitude100m": 2.8259,
+            "components": {
+              "bg": 2.5758,
+              "household": 0.004,
+              "ship": 0.0,
+              "power": 0.0074,
+              "misc": 0.0,
+              "traffic": 0.2674999999999996
+            },
+            "value": 2.8547
+          },
+          {
+            "name": "BC",
+            "regional": 0.0499,
+            "altitude100m": 0.0524,
+            "components": {
+              "bg": 0.0423,
+              "household": 0.0004,
+              "ship": 0.0,
+              "power": 0.0005,
+              "misc": 0.0,
+              "traffic": 0.009500000000000001
+            },
+            "value": 0.0527
+          },
+          {
+            "name": "CO",
+            "regional": 145.8492,
+            "altitude100m": 66.2318,
+            "components": {
+              "bg": 64.2421,
+              "household": 0.0537,
+              "ship": 0.0,
+              "power": 0.0151,
+              "misc": 0.0,
+              "traffic": 2.027300000000011
+            },
+            "value": 66.3382
+          },
+          {
+            "name": "NO2",
+            "regional": 3.6517,
+            "altitude100m": 0.7263,
+            "components": {
+              "bg": 0.0,
+              "household": 0.0002,
+              "ship": 0.0,
+              "power": 0.016,
+              "misc": 0.0,
+              "traffic": 0.7658
+            },
+            "value": 0.782
+          },
+          {
+            "name": "NO",
+            "regional": 0.0251,
+            "altitude100m": 0.7245,
+            "components": {
+              "bg": 0.0,
+              "ship": 0.0,
+              "household": 0.0,
+              "power": 0.0109,
+              "misc": 0.0,
+              "traffic": 0.7715
+            },
+            "value": 0.7824
+          },
+          {
+            "name": "O3",
+            "regional": 32.1404,
+            "altitude100m": 32.3489,
+            "components": {
+              "bg": 32.6699,
+              "ship": 0.0,
+              "household": 0.0,
+              "power": -0.0186,
+              "misc": -0.0014,
+              "traffic": -0.37189999999999657
+            },
+            "value": 32.278
+          },
+          {
+            "name": "PM10",
+            "regional": 1.2223,
+            "altitude100m": 3.0497,
+            "value": 3.099
+          },
+          {
+            "name": "PM25",
+            "regional": 0.8112,
+            "altitude100m": 1.0613,
+            "components": {
+              "bg": 0.9877,
+              "ship": 0.0,
+              "household": 0.0013,
+              "power": 0.0026,
+              "misc": 0.0,
+              "traffic": 0.07329999999999992
+            },
+            "value": 1.0649
+          },
+          {
+            "name": "coarsePM",
+            "regional": 0.4139,
+            "altitude100m": 1.9845,
+            "components": {
+              "bg": 1.9724,
+              "misc": 0.0334,
+              "resusp": 0.0182,
+              "traffic": 0.010499999999999954
+            },
+            "value": 2.0345
+          },
+          {
+            "name": "PNC",
+            "regional": 405.6044,
+            "altitude100m": 1140.5321,
+            "components": {
+              "bg": 825.6502,
+              "ship": 0.0,
+              "household": 1.2903,
+              "power": 2.5586,
+              "misc": 1.0117,
+              "traffic": 342.8056999999999
+            },
+            "value": 1173.3165
+          }
+        ]
+      },
+      "localDate": "2025-08-26T04:00:00+03:00"
+    }
+  ],
+  "longitude": 24.912241001988615,
+  "latitude": 60.263296126396405,
+  "units": {
+    "NO": "μg/m^3",
+    "BC": "μg/m^3",
+    "ABLH": "m",
+    "O3": "μg/m^3",
+    "PNC": "1/cm^3",
+    "wind_E": "degrees",
+    "coarsePM": "μg/m^3",
+    "skyCondition": "",
+    "NO2": "μg/m^3",
+    "SO2": "μg/m^3",
+    "temperature": "°C",
+    "AQI": "",
+    "humidity": "%",
+    "swRad": "W/m^2",
+    "windDirection": "degrees",
+    "wind_N": "m/s",
+    "windSpeed": "m/s",
+    "sensHflux": "W/m^2",
+    "rain": "precipitation_mm_per_hour",
+    "lwRad": "W/m^2",
+    "NMVOC": "μg/m^3",
+    "LDSA": "um2 1/cm^3",
+    "PM25": "μg/m^3",
+    "pressure": "hPa",
+    "dewPoint": "°C",
+    "CO": "μg/m^3",
+    "roadSurfaceWater": "µm",
+    "PM10": "μg/m^3",
+    "InvMOlength": "1/m"
+  }
+}
 ```
 
 </details>
@@ -295,12 +547,12 @@ In these cases pick a point outside the building.
 
 Example building call
 ```
-https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.19823873736357&lon=24.930557907247696&startTime=2025-03-10T13%3A09%3A58Z
+https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.19823873736357&lon=24.930557907247696&startTime=2025-08-26T00%3A00Z&endTime=2025-08-26T01%3A00Z
 ```
 
 Example json output
 ```javascript
-{"longitude":24.930557907247696,"latitude":60.19823873736357,"unavailable":"Location is inside a building.","data":[]}
+[{"parameter":null,"error":"Location is inside a building."}]
 ```
 
 </details>
@@ -310,7 +562,7 @@ Example json output
 
 ## Regions endpoint
 
-https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas
+https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas
 
 An endpoint that gives the boundaries of currently valid modelling areas.
 The endpoint takes no arguments but requires the same authorization. Querying outside these bounds will result in empty results "[]".
@@ -319,11 +571,11 @@ The endpoint takes no arguments but requires the same authorization. Querying ou
 
 With curl:
 ```bash
-curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H 'Authorization: Bearer <your-access-token>'
+curl 'https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H 'Authorization: Bearer <your-access-token>'
 ```
 
 Both steps with jq:
 ```bash
 export ACCESS_TOKEN=”$(curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-connect/token' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d grant_type=password&username=<your-user-name>&password=<your-password>&client_id=point-service| jq -r ‘.access_token’)”
-curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H "Authorization: Bearer ${ACCESS_TOKEN}"
+curl 'https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```
