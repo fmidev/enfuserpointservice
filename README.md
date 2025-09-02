@@ -49,7 +49,7 @@ curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-
 
 The main endpoint is
 
-https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/point-data
+https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data
 
 The endpoint takes the following arguments
 
@@ -71,7 +71,7 @@ There are other endpoints that will be documented as they are considered ready f
 
 For a call (with proper headers as described above):
 ```
-https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.263296126396405&lon=24.912241001988615&startTime=2025-08-26T00%3A00Z&endTime=2025-08-26T01%3A00Z
+https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.263296126396405&lon=24.912241001988615&startTime=2025-08-26T00%3A00Z&endTime=2025-08-26T01%3A00Z
 ```
 
 <details>
@@ -547,7 +547,7 @@ In these cases pick a point outside the building.
 
 Example building call
 ```
-https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.19823873736357&lon=24.930557907247696&startTime=2025-08-26T00%3A00Z&endTime=2025-08-26T01%3A00Z
+https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data?lat=60.19823873736357&lon=24.930557907247696&startTime=2025-08-26T00%3A00Z&endTime=2025-08-26T01%3A00Z
 ```
 
 Example json output
@@ -562,7 +562,7 @@ Example json output
 
 ## Regions endpoint
 
-https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas
+https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas
 
 An endpoint that gives the boundaries of currently valid modelling areas.
 The endpoint takes no arguments but requires the same authorization. Querying outside these bounds will result in empty results "[]".
@@ -571,11 +571,11 @@ The endpoint takes no arguments but requires the same authorization. Querying ou
 
 With curl:
 ```bash
-curl 'https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H 'Authorization: Bearer <your-access-token>'
+curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H 'Authorization: Bearer <your-access-token>'
 ```
 
 Both steps with jq:
 ```bash
 export ACCESS_TOKEN=”$(curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-connect/token' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d grant_type=password&username=<your-user-name>&password=<your-password>&client_id=point-service| jq -r ‘.access_token’)”
-curl 'https://point-service-enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H "Authorization: Bearer ${ACCESS_TOKEN}"
+curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H "Authorization: Bearer ${ACCESS_TOKEN}"
 ```

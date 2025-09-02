@@ -15,7 +15,7 @@ default_credential_store = Path("./credentials.json")
 class EnfuserAPI:
     def __init__(self, username=None, password=None, 
                  token_endpoint="https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-connect/token",
-                api_base="https://point-service-enfuser-portal.2.rahtiapp.fi"):
+                api_base="https://enfuser-portal.2.rahtiapp.fi"):
         
         if username is None or password is None:
             if not default_credential_store.exists():
