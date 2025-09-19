@@ -557,8 +557,21 @@ Example json output
 
 </details>
 
+
 ## Known issues
 * The server can return 403 even with correct credentials when there is high load. Simply retry after a few seconds.
+
+## Statistics endpoint
+
+https://enfuser-portal.2.rahtiapp.fi/enfuser/point-statistics
+
+Endpoint that gives statistics of concentrations averaged to local hours.
+The endpoint takes the following arguments:
+
+- lat: latitude
+- lon: longitude
+- startTime (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given with proper timezones, you can use the local timezone in the same format)
+- endTime (optional, default startTime) same format as starttime
 
 ## Regions endpoint
 

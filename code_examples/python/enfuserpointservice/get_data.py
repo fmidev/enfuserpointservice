@@ -142,17 +142,10 @@ class EnfuserAPI:
 
         response = requests.get(self.point_statistics_endpoint, params=params, headers=self.get_headers())
         if response.status_code != 200:
-            print(f"Failed to get statistics: {response.status_code}, {response.text}")
-            return response
+            raise Exception(f"Failed to get statistics: {response.status_code}, {response.text}")
         
         if parse:
-            try:
-                return parsing.parse_statistics_endpoint(response.json())
-            except Exception as e:
-                print(e)
-                print(traceback.format_exc())
-                print(f"Can't parse the statistics data. Message from server {response.text} \n")
-                return response
+            return parsing.parse_statistics_endpoint(response.json())
 
         return response.json()
     
