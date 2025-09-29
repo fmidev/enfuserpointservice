@@ -3,6 +3,9 @@ Documentation and example codes to access data from the Enfuser model point serv
 
 Access is only granted within projects currently for testing purposes and the interfaces as well as data availability are subject to change.
 
+We have provided a python library to do these queries. This can be found in the code_examples directory. A Java example can be found at https://github.com/johanssl/AQViewer . If you need to use other languages and are having difficulties please ask and we’ll see what can be done.
+
+
 # Registration
 
 To get an user account first register at 
@@ -18,8 +21,6 @@ Once you’ve created an account and your usage has been approved, you will be n
 # Token extraction
 
 The service works with a bearer authentication mechanism. You first acquire a token from one endpoint using your username/password , which is valid for ~1 hour to get data from the other endpoints.
-
-We have provided a python library to do these queries and handle the token for you as well as an example in java. These can be found in the code_examples directory. If you need to use other languages and are having difficulties please ask and we’ll see what can be done.
 
 Below we explain the technical details of the endpoints:
 
