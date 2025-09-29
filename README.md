@@ -15,7 +15,7 @@ The e-mail adress will be used only to facilitate communication about the servic
 
 Once you’ve created an account and your usage has been approved, you will be notified by e-mail. Then you can use your user name (i.e. your email address) and password to access the service.
 
-# Accessing the data
+# Token extraction
 
 The service works with a bearer authentication mechanism. You first acquire a token from one endpoint using your username/password , which is valid for ~1 hour to get data from the other endpoints.
 
@@ -45,7 +45,33 @@ Example using curl
 curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-connect/token' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=password&username=<your-user-name>&password=<your-password>&client_id=point-service'
 ```
 
-# Access data using the token
+All other endpoints should be called with a https GET query, you must include the access_token that you acquired in via a header:
+> Authorization: Bearer access_token
+
+Where you need to replace “access_token” with the actual access token (Which will be a very long string)
+
+
+## List available data
+
+https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas
+
+An endpoint that gives the boundaries (space and time) of currently valid modelling areas.
+The endpoint takes no arguments but requires the same authorization. Querying outside these bounds will result in empty results "[]".
+
+### Examples of the regions-areas endpoint
+
+With curl:
+```bash
+curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H 'Authorization: Bearer <your-access-token>'
+```
+
+Both steps with jq:
+```bash
+export ACCESS_TOKEN=”$(curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-connect/token' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d grant_type=password&username=<your-user-name>&password=<your-password>&client_id=point-service| jq -r ‘.access_token’)”
+curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H "Authorization: Bearer ${ACCESS_TOKEN}"
+```
+
+# Point queries
 
 The main endpoint is
 
@@ -53,19 +79,12 @@ https://enfuser-portal.2.rahtiapp.fi/enfuser/point-data
 
 The endpoint takes the following arguments
 
-- lat: latitude
-- lon: longitude
-- startTime (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given with proper timezones)
-- endTime (optional, default startTime) same format as starttime
+- `lat`: latitude
+- `lon`: longitude
+- `startTime` (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given with proper timezones)
+- `endTime` (optional, default startTime) same format as starttime
 
 This endpoint gives json that has all the modeled pollutants and meteorological data for times that fall between startTime and endTime. The data is only available at full hours (i.e. 12:00, 13:00 etc), so the interval should contain at least one of them.
-
-These endpoints should be called with a https GET query, you must include the access_token that you acquired in the previous step via a header:
-> Authorization: Bearer access_token
-
-Where you need to replace “access_token” with the actual access token (Which will be a very long string)
-
-There are other endpoints that will be documented as they are considered ready for general use.
 
 ## Example query to the endpoint
 
@@ -558,37 +577,35 @@ Example json output
 </details>
 
 
-## Known issues
-* The server can return 403 even with correct credentials when there is high load. Simply retry after a few seconds.
+## Geographic queries
+
+https://enfuser-portal.2.rahtiapp.fi/enfuser/netcdf
+
+and the corresponding geotiff endpoint:
+
+https://enfuser-portal.2.rahtiapp.fi/enfuser/geotiff
+
+The endpoint takes the following arguments:
+
+  - `variables`: List of variables to query (see the endpoint for listing available data for variable names available in the area, e.g. "PM25" or "BC")
+  - `north`: Northern boundary (latitude)
+  - `south`: Southern boundary (latitude)
+  - `west`: Western boundary (longitude)
+  - `east`: Eastern boundary (longitude)
+  - `startTime` (optional, default now): Time for the data (format: `YYYY-MM-DDTHH:MM:SSZ`).
+
 
 ## Statistics endpoint
 
 https://enfuser-portal.2.rahtiapp.fi/enfuser/point-statistics
 
-Endpoint that gives statistics of concentrations averaged to local hours.
+Endpoint that gives statistics of concentrations binned to local hours.
 The endpoint takes the following arguments:
 
-- lat: latitude
-- lon: longitude
-- startTime (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given with proper timezones, you can use the local timezone in the same format)
-- endTime (optional, default startTime) same format as starttime
+- `lat`: latitude
+- `lon`: longitude
+- `startTime` (optional, default now): Time you want the data to start from in format: 2025-02-27T12:00:00Z (The Z is not optional, all times must be given with proper timezones, you can use the local timezone in the same format)
+- `endTime` (optional, default startTime) same format as starttime
 
-## Regions endpoint
-
-https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas
-
-An endpoint that gives the boundaries of currently valid modelling areas.
-The endpoint takes no arguments but requires the same authorization. Querying outside these bounds will result in empty results "[]".
-
-### Examples of regions endpoint
-
-With curl:
-```bash
-curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H 'Authorization: Bearer <your-access-token>'
-```
-
-Both steps with jq:
-```bash
-export ACCESS_TOKEN=”$(curl -X 'POST' 'https://epk.2.rahtiapp.fi/realms/enfuser-portal/protocol/openid-connect/token' -H 'accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d grant_type=password&username=<your-user-name>&password=<your-password>&client_id=point-service| jq -r ‘.access_token’)”
-curl 'https://enfuser-portal.2.rahtiapp.fi/enfuser/regions-areas' -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+## Known issues
+* The server can return 403 even with correct credentials when there is high load. Simply retry after a few seconds.

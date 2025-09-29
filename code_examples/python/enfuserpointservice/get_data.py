@@ -86,7 +86,7 @@ class EnfuserAPI:
         
         return response.json()
     
-    def get_area(self, format="netcdf", variables=None, north=None, south=None, west=None, east=None, dateTime=None):
+    def get_area(self, format="netcdf", variables=None, north=None, south=None, west=None, east=None, startTime=None, endTime=None):
         """
         Query the geotiff or netcdf endpoint with the given parameters.
 
@@ -111,12 +111,12 @@ class EnfuserAPI:
         params["south"] = south
         params["west"] = west
         params["east"] = east
-        params["dateTime"] = dateTime
+        params["startTime"] = startTime
+        params["endTime"] = endTime
 
         response = requests.get(url, params=params, headers=self.get_headers())
         if response.status_code != 200:
-            print((f"Failed to get {format}: {response.status_code}, {response.text}"))
-            raise Exception(f"Failed to get {format}: {response.status_code}, {response.text}")
+            raise Exception(f"Url {response.url}, failed to get {format}: {response.status_code}, {response.text}")
         return response
     
 
