@@ -86,7 +86,7 @@ class EnfuserAPI:
         
         return response.json()
     
-    def get_area(self, format="netcdf", variables=None, north=None, south=None, west=None, east=None, startTime=None, endTime=None):
+    def get_area(self, format="netcdf", variables=None, north=None, south=None, west=None, east=None, startTime=None):
         """
         Query the geotiff or netcdf endpoint with the given parameters.
 
@@ -94,7 +94,7 @@ class EnfuserAPI:
             endpoint (str): "geotiff" or "netcdf"
             variables (list): List of variable names (strings)
             north, south, west, east (float): Bounding box coordinates
-            dateTime (str): ISO formatted datetime string
+            startTime (str): ISO formatted datetime string
 
         Returns:
             Response: Response object from the request.
@@ -112,7 +112,6 @@ class EnfuserAPI:
         params["west"] = west
         params["east"] = east
         params["startTime"] = startTime
-        params["endTime"] = endTime
 
         response = requests.get(url, params=params, headers=self.get_headers())
         if response.status_code != 200:
@@ -149,8 +148,22 @@ class EnfuserAPI:
 
         return response.json()
     
-    def acquire(self, lat, lon, starttime, endtime=None, parse=False, values=None, retries=3, retry_interval=2):
-            
+    def acquire(self, lat, lon, starttime, endtime=None, parse=False, values=None, variables=None, retries=3, retry_interval=2):
+
+            """
+            Get data from the point service.
+            Arguments:
+            lat (float): Latitude.
+            lon (float): Longitude.
+            starttime (str or datetime): Start time (ISO string or datetime).
+            endtime (str or datetime, optional): End time (ISO string or datetime). Defaults to same as starttime.
+            parse (bool, optional): Whether to parse the response into xarray. Defaults to False
+            values (list, optional): List of value groups to request. Defaults to None, which requests all.
+            variables (list, optional): List of specific variables to request. Defaults to None, which requests all.
+            retries (int, optional): Number of retries for 403 responses. Defaults to 3.
+            retry_interval (int, optional): Seconds to wait between retries. Defaults to 2.
+            """
+
             str_start = self.turn_time_to_string(starttime)
             if endtime is not None:
                 str_end = self.turn_time_to_string(endtime)
@@ -166,6 +179,10 @@ class EnfuserAPI:
             }
             if values is not None:
                 params["values"] = values
+            if variables is not None:
+                params["variables"] = variables
+                if values is not None and len(values) == 1 and values[0] == "meteorology":
+                    raise ValueError("Requesting only meteorology and specifying variables leads to empty response.")
     
             for attempt in range(retries):
                 result = requests.get(self.api_endpoint, params=params, headers=self.get_headers())
@@ -175,7 +192,7 @@ class EnfuserAPI:
                     sleep(retry_interval)
                 else:
                     if result.status_code != 200:
-                        raise Exception(f"Failed to get data: {result.status_code}, {result.text}")
+                        raise Exception(f"Failed to get data: {result.status_code}, {result.text}, request url: {result.url}")
                     break
             else:
                 raise Exception("Failed to get data after multiple retries. Please make sure you have been granted permission to pointservice & check your credentials.")
@@ -186,7 +203,4 @@ class EnfuserAPI:
             try:
                 return parsing.transform_to_xarray(result.json())
             except Exception as e:
-                print(e)
-                print(traceback.format_exc())
-                print(f"Can't parse the data. Check it is not inside a building, or outside the modelling areas. Message from server {result.text} \n")
-                return result.text
+                raise Exception(f"Failed to parse response. Response text: {result.text}") from e
