@@ -47,4 +47,11 @@ with open("example_file.nc", "wb") as f:
 #the statistics endpoint
 stats = a.get_statistics(lat, lon, starttime="2025-07-01T00:00:00Z", endtime="2025-07-14T00:00:00Z")
 
+#The raw data endpoint
+test_zip = a.get_zip(lat=60.1806186403568, lon=24.934283345343125, starttime="2025-07-01T00:00:00Z")
+
+#saving the data to a file
+with open("test.zip", "wb") as f:
+    f.write(test_zip.content)
+
 ```

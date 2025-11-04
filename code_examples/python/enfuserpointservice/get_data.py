@@ -36,8 +36,10 @@ class EnfuserAPI:
         self.geotiff_endpoint = api_base + "/enfuser/geotiff"
         self.netcdf_endpoint = api_base + "/enfuser/netcdf"
         self.point_statistics_endpoint = api_base + "/enfuser/point-statistics"
+        self.zip_endpoint = api_base + "/enfuser/rawdata"
         self.token_endpoint = token_endpoint
         self.get_token()
+
 
     def get_token(self):
         response = requests.post(self.token_endpoint, data={
@@ -148,6 +150,31 @@ class EnfuserAPI:
 
         return response.json()
     
+    def get_zip(self, lat, lon, starttime):
+        """
+        Get a zip file containing data for the given location (the whole area your point belongs to) and starttime.
+
+        Args:
+            lat (float): Latitude.
+            lon (float): Longitude.
+            starttime (str or datetime): Start time (ISO string or datetime).
+        Returns:
+            Response object containing the zip file.
+        """
+
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "startTime": self.turn_time_to_string(starttime),
+            "endTime": self.turn_time_to_string(starttime)
+        }
+
+        response = requests.get(self.zip_endpoint, params=params, headers=self.get_headers())
+        if response.status_code != 200:
+            raise Exception(f"Failed to get zip data: {response.status_code}, {response.text}")
+        return response
+
+
     def acquire(self, lat, lon, starttime, endtime=None, parse=False, values=None, variables=None, retries=3, retry_interval=2):
 
             """
@@ -204,3 +231,14 @@ class EnfuserAPI:
                 return parsing.transform_to_xarray(result.json())
             except Exception as e:
                 raise Exception(f"Failed to parse response. Response text: {result.text}") from e
+            
+    def list_endpoints_and_associated_functions(self):
+        """Lists available endpoints and their associated functions as a dictionary."""
+
+        return {
+            "List available data, time and modelling areas": self.get_modelling_areas,
+            "Netcdf/Tiff area": self.get_area,
+            "Point statistics": self.get_statistics,
+            "Enfuser raw output zips for one time/area": self.get_zip,
+            "Point queries": self.acquire,
+        }
