@@ -88,7 +88,7 @@ class EnfuserAPI:
         
         return response.json()
     
-    def get_area(self, format="netcdf", variables=None, north=None, south=None, west=None, east=None, startTime=None):
+    def get_area(self, format="netcdf", variables=None, north=None, south=None, west=None, east=None, startTime=None, values=None):
         """
         Query the geotiff or netcdf endpoint with the given parameters.
 
@@ -97,7 +97,7 @@ class EnfuserAPI:
             variables (list): List of variable names (strings)
             north, south, west, east (float): Bounding box coordinates
             startTime (str): ISO formatted datetime string
-
+            values (str): height100m (if you want 100 meter data), for surface data leave empty
         Returns:
             Response: Response object from the request.
         """
@@ -114,6 +114,8 @@ class EnfuserAPI:
         params["west"] = west
         params["east"] = east
         params["startTime"] = startTime
+        if values is not None:
+            params["values"] = values
 
         response = requests.get(url, params=params, headers=self.get_headers())
         if response.status_code != 200:

@@ -594,6 +594,7 @@ The endpoint takes the following arguments:
   - `west`: Western boundary (longitude)
   - `east`: Eastern boundary (longitude)
   - `startTime` (optional, default now): Time for the data (format: `YYYY-MM-DDTHH:MM:SSZ`).
+  - `values` (optional, default None): If you want data 100 m above the surface (where available), this argument should be "height100m"
 
 
 ## Statistics endpoint
